@@ -1,5 +1,5 @@
 OBJECTS=histogram_grid.o polar_histogram.o vfh.o
-EXAMPLES=create_histogram_grid
+EXAMPLES=no-velocity
 CC=gcc
 CFLAGS=-Iinclude -Wall -O3 -std=c99
 LDLIBS=-lm
@@ -17,7 +17,7 @@ histogram_grid.c: include/histogram_grid.h
 
 polar_histogram.c: include/polar_histogram.h include/histogram_grid.h
 
-create_histogram_grid: examples/create_histogram_grid.c histogram_grid.o
+no-velocity: examples/no-velocity.c histogram_grid.o polar_histogram.o vfh.o
 	$(CC) $(CFLAGS) $^ $(LDLIBS) -o $@
 
 clean_objs:

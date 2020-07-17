@@ -1,4 +1,7 @@
 #include <assert.h>
+
+
+//#define _USE_MATH_DEFINES
 #include <math.h>
 #include <stdlib.h>
 
@@ -7,7 +10,7 @@
 //
 // Certainty grid-related functions.
 //
-
+#define M_PI 3.1415926
 grid_t * grid_init(int dimension, int resolution) {
   // TODO: Also `assert` that the resolution is within some reasonable values (???).
   assert(dimension % 2 == 1);
@@ -51,19 +54,44 @@ int grid_update(grid_t * grid, int pos_x, int pos_y, range_measure_t data) {
   **
   ** Remember that cos() and sin() expect angles in RADIANS, not DEGREES.
   */
-  double cells = data.distance / grid->resolution;
+  double cells = data.distance / grid->resolution;//这里求出有几个栅格距离障碍物
 
-  int new_x = pos_x + (int) floor(cells * cos(data.direction * M_PI / 180));
+  int new_x = pos_x + (int) floor(cells * cos(data.direction * M_PI / 180));//将度数转换为弧度
   int new_y = pos_y + (int) floor(cells * sin(data.direction * M_PI / 180));
-
+  printf("new position :%d ,%d ,",new_x,new_y);
   /* Is this point inside the grid? (to avoid overflows) */
   if (new_x < grid->dimension && new_y < grid->dimension) {
     grid->cells[new_x * grid->dimension + new_y] += 1;
   }
-
+ // printf("%d grid->cells value is:%d \n",new_x * grid->dimension + new_y,grid->cells[new_x * grid->dimension + new_y]);
   return 1;
 }
+int grid_update_new(grid_t * grid, int pos_x, int pos_y, range_measure_t data) {
+  if (grid == NULL) return 0;
+  if (grid->cells == NULL) return 0;
 
+  /*
+  ** Transform each sensor reading into cartesian coordinates and increase the
+  ** corresponding cell's obstacle density.
+  **
+  ** Polar to cartesian:
+  **   (r, o) -> (r * cos(x), r * sin(y))
+  **
+  ** Remember that cos() and sin() expect angles in RADIANS, not DEGREES.
+  */
+  double cells = data.distance / grid->resolution;//这里求出有几个栅格距离障碍物
+  //求出障碍物所占的坐标栅格
+  int new_x = pos_x + (int) floor(cells * cos(data.direction * M_PI / 180));//将度数转换为弧度,i同时加距离
+  int new_y = pos_y + (int) floor(cells * sin(data.direction * M_PI / 180));
+ // printf("new position :%d ,%d ,",new_x,new_y);
+  /* Is this point inside the grid? (to avoid overflows) */
+  if (new_x < grid->dimension && new_y < grid->dimension) {
+	  //相应的第N栅格加1  数目= x*边长+y
+    grid->cells[new_x * grid->dimension + new_y] += 1;
+  }
+ // printf("%d grid->cells value is:%d \n",new_x * grid->dimension + new_y,grid->cells[new_x * grid->dimension + new_y]);
+  return 1;
+}
 /* TODO: Finish implementing get_moving_window. */
 grid_t * get_moving_window(grid_t * grid, int current_x, int current_y, int dimension) {
   /*

@@ -54,7 +54,7 @@ int calculate_direction(hist_t * hist, int objective_direction) {
   // direction that is below the threshold.
 
   for (sector = 0; sector < hist->sectors; ++sector) {
-
+      printf("%d densities: %d \n",sector,hist->densities[sector]);
     if (hist->densities[sector] < hist->threshold) {
 
       dist_best_and_obj = modular_dist(best_direction, objective_direction, hist->sectors);

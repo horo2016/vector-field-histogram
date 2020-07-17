@@ -11,7 +11,7 @@
 
 #ifndef VFH_H
 #define VFH_H
-
+#include "polar_histogram.h"
 /* Control signal created by the algorithm. */
 typedef struct {
   int direction; /* [degrees] */

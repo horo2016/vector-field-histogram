@@ -10,9 +10,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../vfh.h"
-
-#define MEASUREMENTS 10000
+#include "vfh.h"
+#include "../include/histogram_grid.h"
+#include "polar_histogram.h"
+#define MEASUREMENTS 360
 #define OBJECTIVE_DIRECTION 90 /* [degrees] */
 
 int main(void) {
@@ -28,8 +29,8 @@ int main(void) {
 	** Initialization of the grid and the histogram.
 	*/
 
-	certainty_grid = grid_init(50, 10);
-	polar_histogram = hist_init(2, 20, 10, 5);
+	certainty_grid = grid_init(51, 10);//52*52 *5cm
+	polar_histogram = hist_init(90, 20, 10, 5);//4个方向(扇区)
 	
 	/* Are the initializations ok? */
 	if (certainty_grid == NULL) return -1;
@@ -44,9 +45,11 @@ int main(void) {
 	printf("Measures\n");
 		
 	for (i = 0; i < MEASUREMENTS; ++i) {
-		measure[i].direction = (int) ((360.0 * rand()) / RAND_MAX); /* [degrees] */
-		measure[i].distance = (int) (((130.0 * rand()) / RAND_MAX) + 20); /* [cm] */
-		
+		measure[i].direction = (int) (i); /* [degrees] */
+		//measure[i].distance = (int) (((130.0 * rand()) / RAND_MAX) + 20); /* [cm] */
+		if(i<200)
+			measure[i].distance =  15; /* [cm] */
+		else measure[i].distance = (int) (120); /* [cm] */
 		if (i < 50)
 			printf("\t%2d: %3d [cm], %3d [degrees]\n", i, (int) measure[i].distance,
 				measure[i].direction);
@@ -62,7 +65,7 @@ int main(void) {
 	/* Add the information from the measures to the grid. */
 	printf("\nUpdating the certainty grid...\n");
 	for (i = 0; i < MEASUREMENTS; ++i) {
-		grid_update(certainty_grid, position_x, position_y, measure[i]);
+		grid_update_new(certainty_grid, position_x, position_y, measure[i]);
 	}
 		
 	/*
@@ -72,6 +75,7 @@ int main(void) {
 	/* Generate the histogram for the current grid. */
 	printf("\nUpdating the polar histogram...\n");
 	hist_update(polar_histogram, certainty_grid);
+	
 	
 	/* What's the next direction? */
 	control_signal.direction = calculate_direction(polar_histogram, OBJECTIVE_DIRECTION);

@@ -5,7 +5,7 @@
 
 #ifndef POLAR_HISTOGRAM_H
 #define POLAR_HISTOGRAM_H
-
+#include "histogram_grid.h"
 /* Polar histogram. */
 typedef struct {
   int alpha;
