@@ -1,4 +1,5 @@
 # Vector Field Histogram
+# 对VFH 进行修改和适配设备
 
 [![Build Status](https://travis-ci.org/agarie/vector-field-histogram.svg?branch=master)](https://travis-ci.org/agarie/vector-field-histogram)
 
